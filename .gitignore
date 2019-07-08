@@ -1,0 +1,5 @@
+./glTF/
+schema/
+
+*.bak
+*~
