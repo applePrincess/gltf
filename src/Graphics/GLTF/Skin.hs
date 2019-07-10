@@ -22,10 +22,3 @@ module Graphics.GLTF.Skin
     , extras :: Maybe Extras
     } deriving (Generic, Show)
   instance FromJSON Skin where
-    parseJSON = withObject "Skin" $ \obj -> Skin
-      <$> obj .:? "inverseBindMatrices"
-      <*> obj .:? "skeleton"
-      <*> (obj .: "joints" >>= validateUnique)
-      <*> obj .:? "name"
-      <*> obj .:? "extensions"
-      <*> obj .:? "extras"

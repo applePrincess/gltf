@@ -64,7 +64,6 @@ library
                     , Graphics.GLTF.Texture
                     , Graphics.GLTF.TextureInfo
                     , Graphics.GLTF.Type
-                    , Graphics.GLTF.Validation
                     
   -- Modules included in this library but not exported.
   -- other-modules:

@@ -21,6 +21,7 @@ module Graphics.GLTF.Material
   import Numeric.Natural
 
   import Data.Aeson
+  import Data.Scientific (Scientific)
   import qualified Data.Vector.Sized as VS
 
   import Graphics.GLTF.TextureInfo
@@ -57,7 +58,7 @@ module Graphics.GLTF.Material
 
   -- | Material Normal Texture Info
   data NormalTextureInfo = NormalTextureInfo 
-    { scale :: Double -- ^ The scalar multiplier applied to each normal vector of the normal texture.
+    { scale :: Scientific -- ^ The scalar multiplier applied to each normal vector of the normal texture.
     , index :: Natural -- ^ The index of the texture.
     , texCoord :: Natural -- ^ The set index of texture's TEXCOORD attribute used for texture coordinate mapping.
     , extensions :: Maybe Extension
@@ -72,7 +73,7 @@ module Graphics.GLTF.Material
       <*> obj .:? "extras"
 
   data OcclusionTextureInfo = OcclusionTextureInfo
-    { strength :: Double -- ^ A scalar multiplier controlling the amount of occlusion applied.
+    { strength :: NNFloat -- ^ A scalar multiplier controlling the amount of occlusion applied.
     , index :: Natural -- ^ The index of the texture.
     , texCoord :: Natural -- ^ The set index of texture's TEXCOORD attribute used for texture coordinate mapping.
     , extensions :: Maybe Extension
@@ -80,7 +81,7 @@ module Graphics.GLTF.Material
     } deriving (Generic, Show)
   instance FromJSON OcclusionTextureInfo where
     parseJSON = withObject "OcclusionTextureInfo" $ \obj -> OcclusionTextureInfo
-      <$> (obj .:? "strength" >>= validateMaybe (inRange 0.0 1.0)) .!= 1.0
+      <$> obj .:? "strength" .!= 1.0
       <*> obj .: "index"
       <*> obj .:? "texCoord" .!= 0
       <*> obj .:? "extensions"

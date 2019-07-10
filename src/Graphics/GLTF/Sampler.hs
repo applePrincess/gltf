@@ -46,6 +46,7 @@ module Graphics.GLTF.Sampler
       <*> obj .:? "name"
       <*> obj .:? "extensions"
       <*> obj .:? "extras"
+
   newtype MagFilter = MagFilter Type deriving newtype (FromJSON)
                                      deriving stock   (Show, Generic)
   pattern NearestMag = MagFilter (Type 9728)

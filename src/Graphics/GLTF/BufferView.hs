@@ -11,6 +11,7 @@ module Graphics.GLTF.BufferView
   , pattern ElementArrayBuffer
   ) where
 
+  import Control.Monad
   import GHC.Generics
   import Numeric.Natural
   
@@ -35,7 +36,7 @@ module Graphics.GLTF.BufferView
       <$> obj .: "buffer"
       <*> obj .:? "byteOffset" .!= 0
       <*> obj .: "byteLength"
-      <*> (obj .:? "byteStride" >>= validateMaybe validateByteStride)
+      <*> (obj .:? "byteStride" >>= mapM validateByteStride)
       <*> obj .: "target"
       <*> obj .:? "name"
       <*> obj .:? "extensions"

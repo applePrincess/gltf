@@ -25,10 +25,12 @@ module Graphics.GLTF.Accessor
   , pattern Mat4
   ) where
 
+  import Control.Monad
   import GHC.Generics
   import Numeric.Natural
 
   import Data.Aeson
+  import Data.Scientific (Scientific)
 
   import Graphics.GLTF.Type
   import Graphics.GLTF.Validation
@@ -42,10 +44,10 @@ module Graphics.GLTF.Accessor
     , byteOffset :: Natural -- ^ The offset relative to the start of the bufferView in bytes.
     , componentType :: ComponentType -- ^ The datatype of components in the attribute.
     , normalized :: Bool -- ^ Specifies whether integer data values should be normalized.
-    , count :: Integer -- ^ The number of attributes referenced by this accessor.
+    , count :: PosInt -- ^ The number of attributes referenced by this accessor.
     , ttype :: AccessorType -- ^ Specifies if the attribute is a scalar, vector, or matrix.
-    , max :: Maybe [Double] -- ^ Maximum value of each component in this attribute.
-    , min :: Maybe [Double] -- ^ Minimum value of each component in this attribute.
+    , max :: Maybe [Scientific] -- ^ Maximum value of each component in this attribute.
+    , min :: Maybe [Scientific] -- ^ Minimum value of each component in this attribute.
     , sparse :: Maybe Sparse -- ^ Sparse storage of attributes that deviate from their initialization value.
     , name :: Maybe Name
     , extensions :: Maybe Extension
@@ -57,29 +59,26 @@ module Graphics.GLTF.Accessor
       <*> obj .:? "byteOffset" .!= 0
       <*> obj .: "componentType"
       <*> obj .:? "normalized" .!= False
-      <*> (obj .: "count" >>= validateCount)
+      <*> obj .: "count"
       <*> obj .: "type"
-      <*> (obj .:? "max" >>= validateMaybe validateRange)
-      <*> (obj .:? "min" >>= validateMaybe validateRange)
+      <*> (obj .:? "max" >>= mapM validateRange)
+      <*> (obj .:? "min" >>= mapM validateRange)
       <*> obj .:? "sparse"
       <*> obj .:? "name"
       <*> obj .:? "extensions"
       <*> obj .:? "extras"
+      where validateRange :: [a] -> Parser a
+            validateRange n | length n `elem` ([1,2,3,4,9,16]::[Int]) = return n
+                            | otherwise                               = fail "length of range must be 1,2,3,4,9 or 16"]
   -- | Sparse storage of attributes that deviate from their initialization value.
   data Sparse = Sparse
-    { count :: Integer -- ^ Number of entries stored in the sparse array.
+    { count :: PosInt -- ^ Number of entries stored in the sparse array.
     , indices :: SparseIndex -- ^ Index array of size `count` that points to those accessor attributes that deviate from their initialization value. Indices must strictly increase.
     , values :: SparseValue  -- ^ Array of size `count` times number of components, storing the displaced accessor attributes pointed by `indices`. Substituted values must have the same `componentType` and number of components as the base accessor.
     , extensions :: Maybe Extension
     , extras :: Maybe Extras
     } deriving (Eq, Generic, Show)
   instance FromJSON Sparse where
-    parseJSON = withObject "Sparse" $ \obj -> Sparse
-      <$> (obj .: "count" >>= validateCount)
-      <*> obj .: "indices"
-      <*> obj .: "values"
-      <*> obj .:? "extensions"
-      <*> obj .:? "extras"
 
   -- | Indices of those attributes that deviate from their initialization value.
   data SparseIndex = SparseIndex

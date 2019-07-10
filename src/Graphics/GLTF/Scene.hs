@@ -21,8 +21,3 @@ module Graphics.GLTF.Scene
     } deriving (Generic, Show)
   
   instance FromJSON Scene where
-    parseJSON = withObject "Scene" $ \obj -> Scene
-      <$> (obj .:? "nodes" >>= validateMaybe validateUnique)
-      <*> obj .:? "name"
-      <*> obj .:? "extensions"
-      <*> obj .:? "extras"

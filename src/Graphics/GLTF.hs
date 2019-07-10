@@ -50,26 +50,6 @@ module Graphics.GLTF where
     , textures :: Maybe (NonEmpty Texture)
     } deriving (Generic, Show)
   instance FromJSON GLTF where
-    parseJSON = withObject "GLTF" $ \obj -> GLTF
-      <$> (obj .:? "extensionsUsed" >>= validateMaybe uniqueAndatLeast1Elem)
-      <*> (obj .:? "extensionsRequired" >>= validateMaybe uniqueAndatLeast1Elem)
-      <*> (obj .:? "accessors" >>= validateMaybe uniqueAndatLeast1Elem)
-      <*> (obj .:? "animations" >>= validateMaybe uniqueAndatLeast1Elem)
-      <*> obj .: "asset"
-      <*> obj .:? "buffers"
-      <*> obj .:? "bufferViews"
-      <*> obj .:? "cameras"
-      <*> obj .:? "images"
-      <*> obj .:? "materials"
-      <*> obj .:? "meshes"
-      <*> obj .:? "nodes"
-      <*> obj .:? "samplers"
-      <*> obj .:? "scene"
-      <*> obj .:? "scenes"
-      <*> obj .:? "skins"
-      <*> obj .:? "textures"
-      where uniqueAndatLeast1Elem :: Eq a => [a] -> Parser [a]
-            uniqueAndatLeast1Elem = both ((validateLength 1), validateUnique)
 
   data GLB = GLB
     { gltf :: GLTF

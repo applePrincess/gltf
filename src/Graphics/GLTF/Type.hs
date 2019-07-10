@@ -91,6 +91,12 @@ module Graphics.GLTF.Type
   mkZToP1 a | a < (1.0) || a > 1.0 = Nothing
             | otherwise            = Just $ ZToP1 a
 
+  newtype PosInt = PosInt Natural deriving newtype (Eq, Num, Integral, Ord)
+                                  deriving stock   (Show, Generic)
+  instance FromJSON PosInt where
+    parseJSON = withScientific "PosInt" $ \num -> if num < 1 || (ceiling num) /= (floor num)
+                                                  then fail "Expected positive integer: got " ++ show num
+                                                  else return $ PosInt (floor num)
   type JSONObject = Object
   -- | The user-defined name of this object.
   type Name = String
