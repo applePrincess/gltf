@@ -1,5 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
-module Graphics.GLTF.Asset where
+module Graphics.GLTF.Asset 
+  (Asset(..)
+  ) where
   import GHC.Generics
 
   import Data.Aeson

@@ -14,7 +14,7 @@ module Graphics.GLTF where
   import Network.ByteOrder (word32)
 
   import Graphics.GLTF.Accessor
-  import Graphics.GLTF.Animation
+  import Graphics.GLTF.Animation hiding (Sampler(..))
   import Graphics.GLTF.Asset
   import Graphics.GLTF.Buffer
   import Graphics.GLTF.BufferView
@@ -29,8 +29,6 @@ module Graphics.GLTF where
   import Graphics.GLTF.Texture
   import Graphics.GLTF.Type
   import Graphics.GLTF.Validation
-
-  import Debug.Trace
 
   data GLTF = GLTF
     { extensionsUsed :: Maybe [String]

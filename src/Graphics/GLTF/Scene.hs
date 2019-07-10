@@ -1,7 +1,10 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Graphics.GLTF.Scene where
+module Graphics.GLTF.Scene
+  (Scene(..)
+  ) where
 
+  import Data.List.NonEmpty
   import GHC.Generics
 
   import Data.Aeson
@@ -11,10 +14,15 @@ module Graphics.GLTF.Scene where
 
   -- | The root nodes of a scene.
   data Scene = Scene
-    { nodes :: Maybe [GLTFID]  --  ^ The indices of each root node.
-    -- , name, extensions, extras
+    { nodes :: Maybe (NonEmpty GLTFID)  --  ^ The indices of each root node.
+    , name :: Maybe Name
+    , extensions :: Maybe Extension
+    , extras :: Maybe Extras
     } deriving (Generic, Show)
   
   instance FromJSON Scene where
     parseJSON = withObject "Scene" $ \obj -> Scene
-      <$> (obj .:? "nodes" >>= validateMaybe (validateLength 1))
+      <$> (obj .:? "nodes" >>= validateMaybe validateUnique)
+      <*> obj .:? "name"
+      <*> obj .:? "extensions"
+      <*> obj .:? "extras"

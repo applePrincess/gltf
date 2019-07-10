@@ -2,7 +2,9 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DataKinds #-}
-module Graphics.GLTF.Node where
+module Graphics.GLTF.Node
+   ( Node(..) 
+   ) where
 
   import Control.Monad (when)
   import Data.List.NonEmpty
@@ -27,15 +29,17 @@ module Graphics.GLTF.Node where
     , scale :: SizedVec 3 Double -- ^ The node's non-uniform scale, given as the scaling factors along the x, y, and z axes.
     , translation :: SizedVec 3 Double -- ^ The node's translation along the x, y, and z axes.
     , weights :: Maybe (NonEmpty Double) -- ^ The weights of the instantiated Morph Target. Number of elements must match number of Morph Targets of used mesh.
-    -- , name, extensions, extras 
+    , name :: Maybe Name
+    , extensions :: Maybe Extension
+    , extras :: Maybe Extras
     } deriving (Eq, Generic, Show)
 
   instance FromJSON Node where
     parseJSON = withObject "Node" $ \obj -> do
-      when (not . or $ [ ("matrix" `HM.member` obj) && ("translation" `HM.member` obj)
-                       , ("matrix" `HM.member` obj) && ("rotation" `HM.member` obj)
-                       , ("matrix" `HM.member` obj) && ("scale" `HM.member` obj)]) $
-        fail "At least one condition does not meet."
+      when (("matrix" `HM.member` obj) && 
+            (("translation" `HM.member` obj) || 
+             ("scale" `HM.member` obj) || 
+             ("rotation" `HM.member` obj))) $ fail "At least one condition does not meet."
       cam <- obj .:? "camera"
       chi <- obj .:? "children"
       ski <- obj .:? "skin"
@@ -45,7 +49,7 @@ module Graphics.GLTF.Node where
       sca <- obj .:? "scale" .!= defaultScale
       tra <- obj .:? "translation" .!= defaultTranslation
       wei <- obj .:? "weights"
-      return $ Node cam chi ski mat mes rot sca tra wei
+      Node cam chi ski mat mes rot sca tra wei <$> obj .:? "name"<*> obj .:? "extensions" <*> obj .:? "extras"
       where defaultMatrix = SizedVec (fromJust $ VS.fromList [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ])
             defaultRotation = SizedVec (fromJust $ VS.fromList [ 0.0, 0.0, 0.0, 1.0 ])
             defaultScale = SizedVec (fromJust $ VS.fromList [ 1.0, 1.0, 1.0 ])

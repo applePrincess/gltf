@@ -1,8 +1,11 @@
+{-# LANGUAGE OverloadedLists #-}
+{-# LANGUAGE FlexibleContexts #-}
 module Graphics.GLTF.Validation where
 
   import Control.Monad (forM_)
   import Data.Maybe
   import Data.List (nub)
+  import GHC.Exts (IsList(..))
 
   import Data.Aeson.Types
 
@@ -16,8 +19,8 @@ module Graphics.GLTF.Validation where
     where cmp = if isExclusive then (<) else (<=)
           failMsg = tag ++ " cannnot be less than " ++ if not isExclusive then " or equal to " else "" ++ show minVal
   
-  validateLength :: Int -> [a] -> Parser [a]
-  validateLength l xs = if length xs < l
+  validateLength :: (IsList a) => Int -> a -> Parser a
+  validateLength l xs = if length (toList xs) < l
                         then fail $ "array length must be greater than or equal to" ++ show l
                         else return xs
 
@@ -28,15 +31,20 @@ module Graphics.GLTF.Validation where
 
   validateCount n | n < 1     = fail "count must be greater than 1"
                   | otherwise = return n
-  validateRange n | length n `elem` [1,2,3,4,9,16] = return n
+
+  validateRange :: (IsList a) => a -> Parser a
+  validateRange n | length (toList n) `elem` ([1,2,3,4,9,16]::[Int]) = return n
                   | otherwise                      = fail "length of range must be 1,2,3,4,9 or 16"
   
   validateMaybe :: (a -> Parser a) -> Maybe a -> Parser (Maybe a)
-  validateMaybe validator = sequence . Just . validator . fromJust
+  validateMaybe validator = maybe (return Nothing) (sequence . Just . validator)
 
-  validateUnique :: Eq a => [a] -> Parser [a]
-  validateUnique a = if a == a' then return a else fail "not unique."
-    where a' = nub a
+  validateUnique :: (IsList a, Eq (Item a)) => a -> Parser a
+  validateUnique a = if al == a' 
+                     then return a 
+                     else fail "not unique."
+    where a' = nub al
+          al = toList a
   -- fail method? to represent failure
   both :: ((a -> Parser a), (a-> Parser a)) -> a -> Parser a
   both (f, g) v = f v >> g v >> return v

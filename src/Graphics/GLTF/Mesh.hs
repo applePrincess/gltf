@@ -3,6 +3,7 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 module Graphics.GLTF.Mesh
   ( Mesh(..)
   , Primitive(..)
@@ -21,6 +22,7 @@ module Graphics.GLTF.Mesh
 
   import Data.Aeson
   import Data.Aeson.Types (Parser)
+  import Data.Scientific (Scientific)
 
   import Graphics.GLTF.Type
   import Graphics.GLTF.Validation
@@ -28,8 +30,10 @@ module Graphics.GLTF.Mesh
   -- | A set of primitives to be rendered.  A node can contain one mesh.  A node's transform places the mesh in the scene.
   data Mesh = Mesh
     { primitives :: NonEmpty Primitive -- ^ An array of primitives, each defining geometry to be rendered with a material.
-    , weights :: Maybe (NonEmpty Double) -- ^ Array of weights to be applied to the Morph Targets.
-    -- name, extensions, extras
+    , weights :: Maybe (NonEmpty Scientific) -- ^ Array of weights to be applied to the Morph Targets.
+    , name :: Maybe Name
+    , extensions :: Maybe Extension
+    , extras :: Maybe Extras
     } deriving (Generic, Show)
   instance FromJSON Mesh where
 
@@ -40,7 +44,8 @@ module Graphics.GLTF.Mesh
     , material :: Maybe GLTFID -- ^ The index of the material to apply to this primitive when rendering.
     , mode :: PrimitiveMode -- ^ The type of primitives to render.
     , targets :: Maybe (NonEmpty GLTFID) -- ^ An array of Morph Targets, each  Morph Target is a dictionary mapping attributes (only `POSITION`, `NORMAL`, and `TANGENT` supported) to their deviations in the Morph Target.
-    -- extensions, extras 
+    , extensions :: Maybe Extension
+    , extras :: Maybe Extras 
     } deriving (Generic, Show)
   instance FromJSON Primitive where
     parseJSON = withObject "Primitive" $ \obj -> Primitive
@@ -49,7 +54,9 @@ module Graphics.GLTF.Mesh
       <*> obj .:? "material"
       <*> obj .:? "mode" .!= Triangles
       <*> obj .:? "targets"
-  
+      <*> obj .:? "extensions"
+      <*> obj .:? "extras"
+
   newtype PrimitiveMode = PrimitiveMode Type deriving newtype FromJSON
                                              deriving stock   Show
   pattern Points        = PrimitiveMode (Type 0)
