@@ -19,7 +19,6 @@ module Graphics.GLTF.Camera
   import Data.Scientific (Scientific)
 
   import Graphics.GLTF.Type
-  import Graphics.GLTF.Validation
   
   -- ^ A camera's projection.  A node can reference a camera to apply a transform to place the camera in the scene.
   data Camera = PCamera (Maybe Name) (Maybe Extension) (Maybe Extras) PerspectiveCamera -- ^ An orthographic camera containing properties to create an orthographic projection matrix.

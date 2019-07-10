@@ -26,7 +26,6 @@ module Graphics.GLTF.Material
 
   import Graphics.GLTF.TextureInfo
   import Graphics.GLTF.Type
-  import Graphics.GLTF.Validation
 
   -- The material appearance of a primitive.
   data Material = Material 

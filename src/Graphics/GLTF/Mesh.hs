@@ -25,7 +25,6 @@ module Graphics.GLTF.Mesh
   import Data.Scientific (Scientific)
 
   import Graphics.GLTF.Type
-  import Graphics.GLTF.Validation
 
   -- | A set of primitives to be rendered.  A node can contain one mesh.  A node's transform places the mesh in the scene.
   data Mesh = Mesh

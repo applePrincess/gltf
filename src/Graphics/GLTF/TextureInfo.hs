@@ -10,7 +10,6 @@ module Graphics.GLTF.TextureInfo
   import Data.Aeson
 
   import Graphics.GLTF.Type
-  import Graphics.GLTF.Validation
 
   -- | Reference to a texture.
   data TextureInfo = TextureInfo

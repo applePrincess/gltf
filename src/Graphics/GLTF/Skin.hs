@@ -10,7 +10,6 @@ module Graphics.GLTF.Skin
   import Data.Aeson
 
   import Graphics.GLTF.Type
-  import Graphics.GLTF.Validation
   
   -- | Joints and matrices defining a skin.
   data Skin = Skin

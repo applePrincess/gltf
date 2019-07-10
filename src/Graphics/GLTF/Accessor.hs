@@ -30,10 +30,10 @@ module Graphics.GLTF.Accessor
   import Numeric.Natural
 
   import Data.Aeson
+  import Data.Aeson.Types (Parser)
   import Data.Scientific (Scientific)
 
   import Graphics.GLTF.Type
-  import Graphics.GLTF.Validation
 
   -- | A typed view into a bufferView.  A bufferView contains raw binary data.  
   --   An accessor provides a typed view into a bufferView or a subset of a 
@@ -67,9 +67,9 @@ module Graphics.GLTF.Accessor
       <*> obj .:? "name"
       <*> obj .:? "extensions"
       <*> obj .:? "extras"
-      where validateRange :: [a] -> Parser a
+      where validateRange :: [a] -> Parser [a]
             validateRange n | length n `elem` ([1,2,3,4,9,16]::[Int]) = return n
-                            | otherwise                               = fail "length of range must be 1,2,3,4,9 or 16"]
+                            | otherwise                               = fail "length of range must be 1,2,3,4,9 or 16"
   -- | Sparse storage of attributes that deviate from their initialization value.
   data Sparse = Sparse
     { count :: PosInt -- ^ Number of entries stored in the sparse array.

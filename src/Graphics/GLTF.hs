@@ -28,7 +28,6 @@ module Graphics.GLTF where
   import Graphics.GLTF.Skin
   import Graphics.GLTF.Texture
   import Graphics.GLTF.Type
-  import Graphics.GLTF.Validation
 
   data GLTF = GLTF
     { extensionsUsed :: Maybe [String]

@@ -10,7 +10,6 @@ module Graphics.GLTF.Scene
   import Data.Aeson
 
   import Graphics.GLTF.Type
-  import Graphics.GLTF.Validation
 
   -- | The root nodes of a scene.
   data Scene = Scene

@@ -10,7 +10,6 @@ module Graphics.GLTF.Buffer
   import Data.Aeson
   
   import Graphics.GLTF.Type
-  import Graphics.GLTF.Validation
 
   -- | A buffer points to binary geometry, animation, or skins.
   data Buffer = Buffer

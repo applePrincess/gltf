@@ -18,7 +18,6 @@ module Graphics.GLTF.BufferView
   import Data.Aeson
 
   import Graphics.GLTF.Type
-  import Graphics.GLTF.Validation
 
   -- |  A view into a buffer generally representing a subset of the buffer.
   data BufferView = BufferView
